@@ -81,6 +81,7 @@ install(TARGETS dronecode_sdk
 install(FILES
     include/dronecode_sdk/connection_result.h
     include/dronecode_sdk/system.h
+    include/dronecode_sdk/deprecated.h
     include/dronecode_sdk/dronecode_sdk.h
     include/dronecode_sdk/plugin_base.h
     DESTINATION "${dronecode_sdk_install_include_dir}"

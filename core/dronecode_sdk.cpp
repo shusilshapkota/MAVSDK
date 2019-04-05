@@ -42,6 +42,7 @@ void DronecodeSDK::set_configuration(Configuration configuration)
     _impl->set_configuration(configuration);
 }
 
+
 std::vector<uint64_t> DronecodeSDK::system_uuids() const
 {
     return _impl->get_system_uuids();

@@ -52,9 +52,4 @@ uint64_t System::get_uuid() const
     return _system_impl->get_uuid();
 }
 
-void System::register_component_discovered_callback(discover_callback_t callback) const
-{
-    return _system_impl->register_component_discovered_callback(callback);
-}
-
 } // namespace dronecode_sdk

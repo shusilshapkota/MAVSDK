@@ -1,5 +1,6 @@
 #pragma once
 
+#include "dronecode_sdk.h"
 #include "global_include.h"
 #include "mavlink_include.h"
 #include "mavlink_parameters.h"
@@ -87,7 +88,7 @@ public:
     void add_new_component(uint8_t component_id);
     size_t total_components() const;
 
-    void register_component_discovered_callback(discover_callback_t callback);
+    //void register_component_discovered_callback(discover_callback_t callback);
 
     uint8_t get_autopilot_id() const;
     std::vector<uint8_t> get_camera_ids() const;
@@ -249,8 +250,8 @@ private:
                                   MAVLinkParameters::ParamValue value,
                                   get_param_int_callback_t callback);
 
-    std::mutex _component_discovered_callback_mutex{};
-    discover_callback_t _component_discovered_callback{nullptr};
+    //std::mutex _component_discovered_callback_mutex{};
+    //discover_callback_t _component_discovered_callback{nullptr};
 
     struct MAVLinkHandlerTableEntry {
         uint16_t msg_id;

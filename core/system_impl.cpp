@@ -38,7 +38,7 @@ SystemImpl::SystemImpl(DronecodeSDKImpl &parent, uint8_t system_id, uint8_t comp
     register_mavlink_message_handler(
         MAVLINK_MSG_ID_STATUSTEXT, std::bind(&SystemImpl::process_statustext, this, _1), this);
 
-    add_new_component(comp_id);
+    //add_new_component(comp_id);
 
     // FIXME: It would be better to do things like this in a method and not
     //        in the constructor where we can't fail gracefully because we
@@ -204,8 +204,8 @@ void SystemImpl::process_heartbeat(const mavlink_message_t &message)
 
 #if defined(ENABLE_FALLBACK_TO_SYSTEM_ID)
     } else if (!is_autopilot(message.compid) && !have_uuid() && ++_non_autopilot_heartbeats >= 10) {
-        // We've received consecutive heartbeats (atleast twice) from a
-        // non-autopilot system! Lets not delay for filling UUID anymore.
+        // We've received consecutive heartbeats from a non-autopilot system!
+        // Lets not delay for filling UUID anymore.
         _uuid = message.sysid;
         _uuid_initialized = true;
 #endif
@@ -353,18 +353,18 @@ ComponentType SystemImpl::component_type(uint8_t component_id)
 {
     switch (component_id) {
         case MAV_COMP_ID_AUTOPILOT1:
-            return AUTOPILOT;
+            return ComponentType::AUTOPILOT;
         case MAV_COMP_ID_CAMERA:
         case MAV_COMP_ID_CAMERA2:
         case MAV_COMP_ID_CAMERA3:
         case MAV_COMP_ID_CAMERA4:
         case MAV_COMP_ID_CAMERA5:
         case MAV_COMP_ID_CAMERA6:
-            return CAMERA;
+            return ComponentType::CAMERA;
         case MAV_COMP_ID_GIMBAL:
-            return GIMBAL;
+            return ComponentType::GIMBAL;
         default:
-            return UNKNOWN;
+            return ComponentType::UNKNOWN;
     }
 }
 
@@ -376,12 +376,12 @@ void SystemImpl::add_new_component(uint8_t component_id)
 
     auto res_pair = _components.insert(component_id);
     if (res_pair.second) {
-        std::lock_guard<std::mutex> lock(_component_discovered_callback_mutex);
-        if (_component_discovered_callback != nullptr) {
-            const ComponentType type = component_type(component_id);
-            auto temp_callback = _component_discovered_callback;
-            call_user_callback([temp_callback, type]() { temp_callback(type); });
-        }
+        //std::lock_guard<std::mutex> lock(_component_discovered_callback_mutex);
+        //if (_component_discovered_callback != nullptr) {
+        //    const ComponentType type = component_type(component_id);
+        //    auto temp_callback = _component_discovered_callback;
+        //    call_user_callback([temp_callback, type]() { temp_callback(type); });
+        //}
         LogDebug() << "Component " << component_name(component_id) << " (" << int(component_id)
                    << ") added.";
     }
@@ -392,21 +392,21 @@ size_t SystemImpl::total_components() const
     return _components.size();
 }
 
-void SystemImpl::register_component_discovered_callback(discover_callback_t callback)
-{
-    std::lock_guard<std::mutex> lock(_component_discovered_callback_mutex);
-    _component_discovered_callback = callback;
-
-    if (total_components() > 0) {
-        for (const auto &elem : _components) {
-            const ComponentType type = component_type(elem);
-            if (_component_discovered_callback) {
-                auto temp_callback = _component_discovered_callback;
-                call_user_callback([temp_callback, type]() { temp_callback(type); });
-            }
-        }
-    }
-}
+//void SystemImpl::register_component_discovered_callback(discover_callback_t callback)
+//{
+//    std::lock_guard<std::mutex> lock(_component_discovered_callback_mutex);
+//    _component_discovered_callback = callback;
+//
+//    if (total_components() > 0) {
+//        for (const auto &elem : _components) {
+//            const ComponentType type = component_type(elem);
+//            if (_component_discovered_callback) {
+//                auto temp_callback = _component_discovered_callback;
+//                call_user_callback([temp_callback, type]() { temp_callback(type); });
+//            }
+//        }
+//    }
+//}
 
 bool SystemImpl::is_standalone() const
 {
